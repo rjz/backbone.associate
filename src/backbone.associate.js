@@ -90,28 +90,11 @@
       // will end up in the output.
       toJSON: function (associations, original, options) {
 
-        var attributes = original.call(this, options),
-            value,
-            defaults = {
-              includeRelations: true,
-              includeEmptyRelations: false
-            },
-            opts = _.defaults({}, options, defaults);
+        var attributes = original.call(this, options);
 
         for (key in associations) {
-          if (opts.includeRelations) {
-            if (attributes[key] instanceof associations[key].type) {
-              value = attributes[key].toJSON();
-              if (_.isEmpty(value) && !opts.includeEmptyRelations) {
-                delete attributes[key];
-              }
-              else {
-                attributes[key] = value;
-              }
-            }
-          }
-          else if (_.has(attributes, key)) {
-            delete attributes[key];
+          if (attributes[key] instanceof associations[key].type) {
+            attributes[key] = attributes[key].toJSON();
           }
         }
 

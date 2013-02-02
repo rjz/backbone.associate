@@ -103,14 +103,6 @@ describe 'association', ->
 
   describe 'serializing', ->
 
-    it 'ignores empty relations by default', ->
-      result = @parent.toJSON()
-      expect(_.isEmpty result).toBeTruthy()
-      
-    it 'ignores relations on request', ->
-      result = @parent.toJSON includeRelations: false
-      expect(_.isEmpty result).toBeTruthy()
-
     it 'converts models to attribute hash', ->
       expected = foo: 'bar'
       ones = withType @associations, Backbone.Model
