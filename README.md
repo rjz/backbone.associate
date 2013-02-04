@@ -28,8 +28,14 @@ and stored in the attribute hash:
 
     var canada = new Country(data, { parse: true });
 
-Since they're *just attributes*, they may be accessed at any time using 
-the usual `get` method:
+When it's time to sync the parent resource back up with the
+database, child resources will be serialized (by key) and
+included in the request.
+
+    canada.toJSON(); // { flag: { colors: ['red','white'] }, ...
+
+Since associates are *just attributes*, they may be accessed at any 
+time using the usual `get` method:
 
     var cities = canada.get('cities');
 
@@ -46,13 +52,36 @@ Or through the sticky-sweet goodness of a sugary accessor:
 That's handy for manipulating the relations, setting up eventing, or 
 any of the many other things this plugin won't do for you.
 
-    this.listenTo(childModel, 'change', this.onChildChanged, this);
+### Things this plugin won't do for you...
 
-When it's time to sync the parent resource back up with the
-database, child resources will be serialized (by key) and
-included in the request.
+..include managing children during `set` operations, configuring child 
+URLs, and making presumptions about child events. Fortunately, all of 
+these can be implemented as needed:
 
-    canada.toJSON(); // { flag: { colors: ['red','white'] }, ...
+    // manage `set` operations
+    Country.prototype.set = function (attributes) {
+
+      // for a collection
+      if (_.has(attributes, 'cities')) {
+        this.cities().reset(attributes.cities);
+        delete attributes.cities;
+      }
+
+      // for a model
+      if (_.has(attributes, 'flag')) {
+        this.flag().set(attributes.flag);
+        delete attributes.flag;
+      }
+
+      return Backbone.Model.prototype.set.call(this, attributes);
+    };
+
+    // configure child URLs
+    canada.cities().urlRoot = canada.url() + '/cities'
+    canada.flag().url = canada.url() + '/flag'
+
+    // handle child events
+    canada.listenTo(canada.cities(), 'change', canada.onCityChanged);
 
 ## Contributing
 
@@ -61,3 +90,4 @@ Contributions are welcome!
 1. Fork this repo
 2. Add your changes and update the spec as needed
 3. Submit a [pull request](help.github.com/pull-requests/)
+

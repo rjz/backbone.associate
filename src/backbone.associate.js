@@ -102,11 +102,10 @@
       }
     };
 
-
     return Association;
   })();
 
-  // Expose association class
+  // Expose Association class for extension
   Backbone.Association = Association;
 
   // Define associations for a model
@@ -114,7 +113,7 @@
     new Association(klass, associations);
   };
 
-  // dissociated an associated model
+  // Remove model associations
   Backbone.dissociate = function (klass) {
     klass._associates.remove();
   };
