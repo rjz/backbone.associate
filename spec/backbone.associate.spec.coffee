@@ -64,6 +64,14 @@ describe 'association', ->
         if _.has(expected, key)
           expect(model[key]().attributes).toEqual expected[key]
 
+    it 'does overwrite defaults', ->
+      expected = { one: { foo: 'bar' } }
+      @modelA::defaults = expected
+      model = new @modelA {}, parse: true
+      for key, association of @associations
+        if _.has expected, key
+          expect(model[key]().attributes).toEqual expected[key]
+
   describe 'parsing', ->
 
     beforeEach ->

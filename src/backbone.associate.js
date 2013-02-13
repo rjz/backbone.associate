@@ -77,7 +77,7 @@
       // Update `parse` to create instances of related types and
       // replace the corresponding entries in the attribute hash.
       parse: function (associations, original, resp, xhr) {
-        var attributes = _.clone(resp);
+        var attributes = _.defaults(_.clone(resp), this.defaults);
         for (key in associations) {
           attributes[key] = new (associations[key].type)(attributes[key]);
         }
