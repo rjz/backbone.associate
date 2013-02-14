@@ -66,11 +66,13 @@ describe 'association', ->
 
     it 'does overwrite defaults', ->
       expected = { one: { foo: 'bar' } }
+      defaults = @modelA::defaults
       @modelA::defaults = expected
       model = new @modelA {}, parse: true
       for key, association of @associations
         if _.has expected, key
           expect(model[key]().attributes).toEqual expected[key]
+      @modelA::defaults = defaults
 
   describe 'parsing', ->
 
