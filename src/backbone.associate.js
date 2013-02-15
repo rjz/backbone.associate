@@ -9,7 +9,7 @@
     // Defines an Association
     function Association (klass, associations) {
 
-      var self = this,
+      var extensions = _.clone(this.extensions),
           originalMethods = {},
           proto = klass.prototype;
 
@@ -24,13 +24,13 @@
           throw new Error('Self-referential relation not permitted');
         }
 
-        self.extensions[key] = function () {
+        extensions[key] = function () {
           return this.get(key);
         }
       });
 
       // apply extensions
-      _.each(self.extensions, function (meth, key) {
+      _.each(extensions, function (meth, key) {
         var original = originalMethods[key] = proto[key];
         proto[key] = function () {
           var args = [associations, original].concat([].slice.call(arguments));
@@ -67,11 +67,12 @@
       initialize: function (associations, original) {
         var attrs = this.attributes;
         for (var key in associations) {
-          if (!_.has(attrs, key)) {
-            attrs[key] = new (associations[key].type)();
+          if (!_.has(attrs, key) || !(attrs[key] instanceof associations[key].type)) {
+            attrs[key] = new (associations[key].type)(attrs[key]);
           }
         }
-        return original.apply(this, arguments);
+        this.attributes = attrs;
+        return original.apply(this, [].slice.call(arguments, 2));
       },
 
       // Update `parse` to create instances of related types and
