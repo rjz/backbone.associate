@@ -3,6 +3,7 @@ require '../src/backbone.associate.js'
 
 class M extends Backbone.Model
 class N extends Backbone.Model
+class O extends Backbone.Model
 class C extends Backbone.Collection
   model: N
 
@@ -11,6 +12,7 @@ describe 'association', ->
   beforeEach ->
     @modelA = M
     @modelB = N
+    @modelC = O
     @collectionB = C
 
     @associations =
@@ -110,6 +112,15 @@ describe 'association', ->
         if _.include manies, key
           expect(result[key] instanceof @associations[key].type).toBeTruthy()
           expect(result[key].get('foo')).toEqual @fixture[key][0]
+
+    it 'recurses', ->
+      Backbone.associate @modelB, { two: { type: @modelC } }
+      fooVal = 'bar'
+      fixture = { one: { two: { foo: fooVal } } }
+      @parent = new @modelA fixture, parse: true
+      expect(@parent.one().two().get('foo')).toEqual fooVal
+      Backbone.dissociate @modelB
+      
 
   describe 'serializing', ->
 

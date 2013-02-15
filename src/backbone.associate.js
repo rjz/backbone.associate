@@ -48,7 +48,7 @@
     // self-destruct this association
     Association.prototype.remove = function () {
       var klass = this.klass;
-      for (meth in this.methods) {
+      for (var meth in this.methods) {
         klass.prototype[meth] = this.methods[meth];
       }
       klass._associates = null;
@@ -66,9 +66,9 @@
       // resources will be created.
       initialize: function (associations, original) {
         var attrs = this.attributes;
-        for (key in associations) {
+        for (var key in associations) {
           if (!_.has(attrs, key)) {
-            attrs[key] = new (associations[key].type)(attrs[key]);
+            attrs[key] = new (associations[key].type)();
           }
         }
         return original.apply(this, arguments);
@@ -76,12 +76,12 @@
 
       // Update `parse` to create instances of related types and
       // replace the corresponding entries in the attribute hash.
-      parse: function (associations, original, resp, xhr) {
-        var attributes = _.defaults(_.clone(resp), this.defaults);
-        for (key in associations) {
-          attributes[key] = new (associations[key].type)(attributes[key]);
+      parse: function (associations, original, resp, options) {
+        var attrs = _.defaults(_.clone(resp), this.attributes, this.defaults);
+        for (var key in associations) {
+          attrs[key] = new (associations[key].type)(attrs[key], { parse: true });
         }
-        return original.call(this, attributes, xhr);
+        return original.call(this, attrs, options);
       },
 
       // Updates `toJSON` to serialize the contents of related types
@@ -89,10 +89,8 @@
       // `includeRelations` in the attributes hash to configure what
       // will end up in the output.
       toJSON: function (associations, original, options) {
-
         var attributes = original.call(this, options);
-
-        for (key in associations) {
+        for (var key in associations) {
           if (attributes[key] instanceof associations[key].type) {
             attributes[key] = attributes[key].toJSON();
           }
