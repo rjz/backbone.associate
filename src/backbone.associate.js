@@ -1,5 +1,5 @@
 /**
- *  backbone.associate.js v0.0.1
+ *  backbone.associate.js v0.0.2
  *  MIT License
  */
 (function (_, Backbone) {
