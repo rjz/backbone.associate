@@ -28,14 +28,13 @@ and stored in the attribute hash:
 
     var canada = new Country(data, { parse: true });
 
-When it's time to sync the parent resource back up with the
-database, child resources will be serialized (by key) and
-included in the request.
+When it's time to sync the parent resource back up with the server, 
+child resources can be serialized and included in the request.
 
     canada.toJSON(); // { flag: { colors: ['red','white'] }, ...
 
 Since associates are *just attributes*, they may be accessed at any 
-time using the usual `get` method:
+time using the usual `get`:
 
     var cities = canada.get('cities');
 
@@ -55,8 +54,8 @@ any of the many other things this plugin won't do for you.
 ### Things this plugin won't do for you...
 
 ..include managing children during `set` operations, configuring child 
-URLs, and making presumptions about child events. Fortunately, all of 
-these can be implemented as needed:
+URLs, identity mapping, and making presumptions about child events. 
+Fortunately, all of these can be implemented as needed:
 
     // manage `set` operations
     Country.prototype.set = function (attributes) {
@@ -80,6 +79,17 @@ these can be implemented as needed:
     canada.cities().urlRoot = canada.url() + '/cities'
     canada.flag().url = canada.url() + '/flag'
 
+    // rudimentary identity mapping
+    var getCountry = function (id) {
+      _countries = {};
+      return (getCountry = function (id) {
+        if (!_countries[id]) {
+          _countries[id] = new Country({ id : id });
+        }
+        return _countries[id];
+      })(id);
+    };
+
     // handle child events
     canada.listenTo(canada.cities(), 'change', canada.onCityChanged);
 
@@ -87,7 +97,7 @@ these can be implemented as needed:
 
 Contributions are welcome!
 
-1. Fork this repo
-2. Add your changes and update the spec as needed
-3. Submit a [pull request](help.github.com/pull-requests/)
+  1. Fork this repo
+  2. Add your changes and update the spec as needed
+  3. Submit a [pull request](help.github.com/pull-requests/)
 
