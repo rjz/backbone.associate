@@ -1,6 +1,10 @@
 Backbone Relations 
 ==================
 
+Presumptionless model relations in < 1kb
+
+## Usage
+
 Given a bunch of related models and collections:
 
     var Country = Backbone.Model.Extend({ /* ... */ });
@@ -51,13 +55,15 @@ Or through the sticky-sweet goodness of a sugary accessor:
 That's handy for manipulating the relations, setting up eventing, or 
 any of the many other things this plugin won't do for you.
 
-### Things this plugin won't do for you...
+## Things this plugin won't do...
 
-..include managing children during `set` operations, configuring child 
-URLs, identity mapping, and making presumptions about child events. 
-Fortunately, all of these can be implemented as needed:
+...include managing children during `set` operations, configuring child 
+URLs, identity mapping, and making any other kinds of presumptions about 
+how it will be used. Fortunately, all of these can be implemented as needed 
+([fiddle here](http://jsfiddle.net/rjzaworski/79T94/)):
 
-    // manage `set` operations
+#### Manage `set` operations
+
     Country.prototype.set = function (attributes) {
       var self = this,
           result = {};
@@ -75,11 +81,13 @@ Fortunately, all of these can be implemented as needed:
       Backbone.Model.prototype.set.call(this, result);
     };
 
-    // configure child URLs
+#### Configure child URLs
+
     canada.cities().urlRoot = canada.url() + '/cities'
     canada.flag().url = canada.url() + '/flag'
 
-    // rudimentary identity mapping
+#### Identity mapping
+
     var getCountry = function (id) {
       _countries = {};
       return (getCountry = function (id) {
@@ -90,7 +98,8 @@ Fortunately, all of these can be implemented as needed:
       })(id);
     };
 
-    // handle child events
+#### Child events
+
     canada.onCityAdded = function (model) {
       console.log('city added!', model.get('name'));
     }
