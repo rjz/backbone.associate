@@ -76,6 +76,14 @@ describe 'association', ->
           expect(model[key]().attributes).toEqual expected[key]
       @modelA::defaults = defaults
 
+    it 'recurses', ->
+      Backbone.associate @modelB, { two: { type: @modelC } }
+      fooVal = 'bar'
+      fixture = { one: { two: { foo: fooVal } } }
+      @parent = new @modelA fixture, parse: true
+      expect(@parent.one().two().get('foo')).toEqual fooVal
+      Backbone.dissociate @modelB
+
   describe 'parsing', ->
 
     beforeEach ->
@@ -113,14 +121,23 @@ describe 'association', ->
           expect(result[key] instanceof @associations[key].type).toBeTruthy()
           expect(result[key].get('foo')).toEqual @fixture[key][0]
 
-    it 'recurses', ->
-      Backbone.associate @modelB, { two: { type: @modelC } }
+    it 'recurses for nested models', ->
+      klass = Backbone.Model.extend {}
+      Backbone.associate @modelB, { two: { type: klass } }
       fooVal = 'bar'
       fixture = { one: { two: { foo: fooVal } } }
-      @parent = new @modelA fixture, parse: true
-      expect(@parent.one().two().get('foo')).toEqual fooVal
+      result = (new @modelA).parse fixture
+      expect(result.one.two().get('foo')).toEqual fooVal
       Backbone.dissociate @modelB
-      
+
+    it 'recurses for nested collections', ->
+      klass = Backbone.Collection.extend model: @modelC
+      Backbone.associate @modelB, { two: { type: klass } }
+      fooVal = 'bar'
+      fixture = { one: { two: [ { id: 'three', foo: fooVal }] } }
+      result = (new @modelA).parse fixture
+      expect(result.one.two().get('three').get('foo')).toEqual fooVal
+      Backbone.dissociate @modelB
 
   describe 'serializing', ->
 
