@@ -59,20 +59,20 @@ Fortunately, all of these can be implemented as needed:
 
     // manage `set` operations
     Country.prototype.set = function (attributes) {
-
-      // for a collection
-      if (_.has(attributes, 'cities')) {
-        this.cities().reset(attributes.cities);
-        delete attributes.cities;
-      }
-
-      // for a model
-      if (_.has(attributes, 'flag')) {
-        this.flag().set(attributes.flag);
-        delete attributes.flag;
-      }
-
-      return Backbone.Model.prototype.set.call(this, attributes);
+      var self = this,
+          result = {};
+    
+      _.each(attributes, function (value, key) {
+        var attribute = self.attributes[key];
+        if (attribute instanceof Backbone.Collection) {
+            attribute.reset(value);
+        } else if (attribute instanceof Backbone.Model) {
+            attribute.set(value);
+        } else {
+            result[key] = value;
+        }
+      });
+      Backbone.Model.prototype.set.call(this, result);
     };
 
     // configure child URLs
@@ -91,7 +91,11 @@ Fortunately, all of these can be implemented as needed:
     };
 
     // handle child events
-    canada.listenTo(canada.cities(), 'change', canada.onCityChanged);
+    canada.onCityAdded = function (model) {
+      console.log('city added!', model.get('name'));
+    }
+
+    canada.listenTo(canada.cities(), 'add', canada.onCityAdded);
 
 ## Contributing
 
