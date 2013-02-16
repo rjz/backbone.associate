@@ -19,16 +19,16 @@ describe 'Example uses', ->
   describe 'Setting associate parameters', ->
     beforeEach ->
       Country::set = (attributes) ->
-        super _.reject attributes, (value, key) =>
+        result = {}
+        _.each attributes, (value, key) =>
           attribute = @attributes[key]
           if attribute instanceof Backbone.Collection
-            attribute.reset attributes.cities
-            true
+            attribute.reset value
           else if attribute instanceof Backbone.Model
-            attribute.set attributes.flag
-            true
+            attribute.set value
           else
-            false
+            result[key] = value
+        super result
 
     afterEach ->
       Country::set = Backbone.Model::set
