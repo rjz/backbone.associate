@@ -21,6 +21,13 @@ Fixtures =
     { age: 26, sex: 'M', name: 'Jordan' }
   ]
 
+  testCountry: 
+    name: 'Canada'
+    cities: [
+      { name: 'Calgary' }
+      { name: 'Regina' }
+    ]
+
 TestHelpers =
 
   # Retrieve a random attribute (specified by key) from
