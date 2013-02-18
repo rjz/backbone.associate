@@ -76,6 +76,11 @@ describe 'association', ->
           expect(model[key]().attributes).toEqual expected[key]
       @modelA::defaults = defaults
 
+    it 'preserves references', ->
+      modelB = new @modelB
+      modelA = new @modelA { one: modelB }
+      expect(modelA.one() is modelB).toBeTruthy()
+
     it 'recurses', ->
       Backbone.associate @modelB, { two: { type: @modelC } }
       fooVal = 'bar'
@@ -120,6 +125,11 @@ describe 'association', ->
         if _.include manies, key
           expect(result[key] instanceof @associations[key].type).toBeTruthy()
           expect(result[key].get('foo')).toEqual @fixture[key][0]
+
+    it 'preserves references', ->
+      model = new @modelB
+      result = @parent.parse _.extend(@fixture, one: model)
+      expect(result.one is model).toBeTruthy()
 
     it 'recurses for nested models', ->
       klass = Backbone.Model.extend {}
