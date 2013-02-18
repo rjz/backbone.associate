@@ -31,18 +31,6 @@ describe 'association', ->
       new association.type instanceof type
     _.pick associations, whitelist
 
-  describe 'sanity checking', ->
-
-    it 'panics if called more than once', ->
-      redundancy = =>
-        Backbone.associate @modelA, @associations
-      expect(redundancy).toThrow 'Associations may be set only once per model'
-
-    it 'throws an error before allowing circular references', ->
-      circling = =>
-        Backbone.associate @modelB, { boo: { type: @modelB } }
-      expect(circling).toThrow 'Self-referential relation not permitted'
-
   describe 'association', ->
 
     it 'adds an accessor', ->
@@ -174,4 +162,12 @@ describe 'association', ->
 
       for key, association of manies
         expect(_.isEqual(result[key], expected)).toBeTruthy()
-  
+ 
+  describe 'an inherited association', ->
+    it 'is defined for the child', ->
+      class modelAChild extends @modelA
+        initialize: -> super
+      child = new modelAChild
+      expect(child.one() instanceof @modelB).toBeTruthy()
+      expect(child.manies() instanceof @collectionB).toBeTruthy()
+
