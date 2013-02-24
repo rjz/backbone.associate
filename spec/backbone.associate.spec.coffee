@@ -49,7 +49,7 @@ describe 'association', ->
 
     it 'does not overwrite existing associates', ->
       expected = { one: { foo: 'bar' } }
-      model = new @modelA(expected, parse: true)
+      model = new @modelA expected
       for key, association of @associations
         if _.has(expected, key)
           expect(model[key]().attributes).toEqual expected[key]
@@ -58,7 +58,7 @@ describe 'association', ->
       expected = { one: { foo: 'bar' } }
       defaults = @modelA::defaults
       @modelA::defaults = expected
-      model = new @modelA {}, parse: true
+      model = new @modelA {}
       for key, association of @associations
         if _.has expected, key
           expect(model[key]().attributes).toEqual expected[key]
@@ -73,7 +73,7 @@ describe 'association', ->
       Backbone.associate @modelB, { two: { type: @modelC } }
       fooVal = 'bar'
       fixture = { one: { two: { foo: fooVal } } }
-      @parent = new @modelA fixture, parse: true
+      @parent = new @modelA fixture
       expect(@parent.one().two().get('foo')).toEqual fooVal
       Backbone.dissociate @modelB
 

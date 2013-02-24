@@ -1,36 +1,40 @@
-Backbone Relations 
+Backbone.associate 
 ==================
 
-Presumptionless model relations in < 1kb
+Presumptionless model relations for Backbone in < 1kb.
+
+[![Build Status](https://travis-ci.org/rjz/backbone-associate.png)](https://travis-ci.org/rjz/backbone-associate)
+
 
 ## Usage
 
-Given a bunch of related models and collections:
+Use `Backbone.associate` to define relationships between application models 
+and collections.
 
-    var Country = Backbone.Model.Extend({ /* ... */ });
-    var Flag = Backbone.Model.Extend({ /* ... */ });
-    var City = Backbone.Model.Extend({ /* ... */ });
-    var Cities = Backbone.Collection.extend({ model: City });
-
-It would be nice to have a simple way to describe the relationships 
-between them. We don't need anything fancy.
+    var Flag = Backbone.Model.Extend({ /* ... */ }),
+        City = Backbone.Model.Extend({ /* ... */ }),
+        Cities = Backbone.Collection.extend({ model: City }),
+        Country = Backbone.Model.Extend({ /* ... */ });
 
     Backbone.associate(Country, {
       flag: { type: Flag },
       cities: { type: Cities }
     });
 
-Now, whenever data is parsed, child resources can be instantiated 
-and stored in the attribute hash:
+Here, we're associating a model (`Country`) with two relations: a `Flag`
+model and a collection of `Cities`. The association keys can be anything,
+but they should match the keys used in the data that will be passed into
+the application's `parse` method.
 
-    var data = {
+    var canada = new Counry({
+      flag: { 
+        colors: ['red','white'] 
+      },
       cities: [
         { name: 'Calgary' },
         { name: 'Regina' }
       ]
-    }
-
-    var canada = new Country(data, { parse: true });
+    });
 
 When it's time to sync the parent resource back up with the server, 
 child resources can be serialized and included in the request.
@@ -38,11 +42,8 @@ child resources can be serialized and included in the request.
     canada.toJSON(); // { flag: { colors: ['red','white'] }, ...
 
 Since associates are *just attributes*, they may be accessed at any 
-time using the usual `get`:
-
-    var cities = canada.get('cities');
-
-Or through the sticky-sweet goodness of a sugary accessor:
+time using the usual `get`. For the truly lazy, `associate` also extends
+the base model with an accessor for each association:
 
     canada.flag().set({ colors: ['red','white'] });
     canada.cities().add([
@@ -53,7 +54,8 @@ Or through the sticky-sweet goodness of a sugary accessor:
     ]);
 
 That's handy for manipulating the relations, setting up eventing, or 
-any of the many other things this plugin won't do for you.
+any of the many other things this plugin won't do for you. Speaking of
+which,
 
 ## Things this plugin won't do...
 
@@ -106,11 +108,22 @@ how it will be used. Fortunately, all of these can be implemented as needed
 
     canada.listenTo(canada.cities(), 'add', canada.onCityAdded);
 
+## Testing
+
+Specs are implemented with `jasmine-node`. After cloning this repo, 
+install dependencies and test with npm.
+
+    $ npm install
+    $ npm test
+
 ## Contributing
 
-Contributions are welcome!
+Have something to add? Contributions are enormously welcome!
 
   1. Fork this repo
-  2. Add your changes and update the spec as needed
+  2. Update the spec and implement the change
   3. Submit a [pull request](help.github.com/pull-requests/)
 
+## License
+
+Backbone.associate is released under the terms of the MIT license
