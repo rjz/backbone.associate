@@ -39,7 +39,8 @@
       // Updates `parse` to initialize associations with the supplied attributes 
       parse: function (original, resp, options) {
         var self = this,
-            attributes = _.defaults(_.clone(resp), self.attributes, self.defaults);
+            result = _.isObject(resp) ? _.clone(resp) : {},
+            attributes = _.defaults(result, self.attributes, self.defaults);
         return original.call(self, _filterAssociates.call(self, attributes), options);
       },
 

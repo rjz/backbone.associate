@@ -93,6 +93,11 @@ describe 'association', ->
         unless _.include _.keys(@associations), key
           expect(result[key]).toEqual expected
 
+    it 'should fill in associations when no attributes are provided', ->
+      result = @parent.parse()
+      for key, association of @associations
+        expect(result[key] instanceof association.type).toBeTruthy()
+
     it 'does not affect arguments', ->
       expected = _.clone @fixture
       @parent.parse @fixture
