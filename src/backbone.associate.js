@@ -11,13 +11,35 @@
     // Sift through a map of attributes and initialize any 
     // known associations
     _filterAssociates = function (attributes) {
-      var associations = this._associations;
+
+      var self = this,
+          current = self.attributes,
+          association,
+          associations = self._associations,
+          omit = [];
+
       for (var key in associations) {
-        if (!(attributes[key] instanceof associations[key].type)) {
-          attributes[key] = new (associations[key].type)(attributes[key]);
+        association = associations[key];
+        if (current[key] instanceof association.type) {
+          if (attributes[key] instanceof association.type) {
+            current[key] = attributes[key];
+            omit.push(key);
+          }
+          else if (current[key] instanceof Backbone.Model) {
+            current[key].set(attributes[key]);
+            omit.push(key);
+          }
+          else if (current[key] instanceof Backbone.Collection) {
+            current[key].reset(attributes[key]);
+            omit.push(key);
+          }
+        }
+        else if (!(attributes[key] instanceof association.type)) {
+          attributes[key] = new (association.type)(attributes[key]);
         }
       }
-      return attributes;
+
+      return _.omit(attributes, omit);
     },
 
     // Wraps a method, exposing an "unwrap" method for reverting it later
@@ -36,11 +58,10 @@
     // Extensions to Backbone.Model for filtering associate data, etc, etc
     _extensions = {
 
-      // Updates `parse` to initialize associations with the supplied attributes 
-      parse: function (original, resp, options) {
+      // Updates `set` to handle supplied attributes
+      set: function (original, attrs, options) {
         var self = this,
-            result = _.isObject(resp) ? _.clone(resp) : {},
-            attributes = _.defaults(result, self.attributes, self.defaults);
+            attributes = _.isObject(attrs) ? _.clone(attrs) : {};
         return original.call(self, _filterAssociates.call(self, attributes), options);
       },
 
