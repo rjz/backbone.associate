@@ -98,6 +98,22 @@ describe 'association', ->
       @parent.set expected
       expect(_.isEqual @fixture, expected).toBeTruthy()
 
+    it 'should not clobber existing model relations', ->
+      @parent.set @fixture
+      expected = @parent.one()
+      expectedAttr = @parent.one().get 'foo'
+      @parent.set a: 'foobar'
+      expect(@parent.one()).toEqual expected
+      expect(@parent.one().get 'foo').toEqual expectedAttr
+
+    it 'should not clobber existing collection relations', ->
+      @parent.set @fixture
+      expected = @parent.manies()
+      expectedLength = @parent.manies().length
+      @parent.set a: 'foobar'
+      expect(@parent.manies()).toEqual expected
+      expect(@parent.manies().length).toEqual expectedLength
+
     it 'should parse model relations', ->
       @parent.set @fixture
       for key, expected of @fixture

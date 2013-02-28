@@ -25,13 +25,16 @@
             current[key] = attributes[key];
             omit.push(key);
           }
-          else if (current[key] instanceof Backbone.Model) {
-            current[key].set(attributes[key]);
-            omit.push(key);
-          }
-          else if (current[key] instanceof Backbone.Collection) {
-            current[key].reset(attributes[key]);
-            omit.push(key);
+          else if (_.has(attributes, key))
+          {
+            if (current[key] instanceof Backbone.Model) {
+              current[key].set(attributes[key]);
+              omit.push(key);
+            }
+            else if (current[key] instanceof Backbone.Collection) {
+              current[key].reset(attributes[key]);
+              omit.push(key);
+            }
           }
         }
         else if (!(attributes[key] instanceof association.type)) {
@@ -62,7 +65,8 @@
       set: function (original, attrs, options) {
         var self = this,
             attributes = _.isObject(attrs) ? _.clone(attrs) : {};
-        return original.call(self, _filterAssociates.call(self, attributes), options);
+        m = _filterAssociates.call(self, attributes);
+        return original.call(self, m, options);
       },
 
       // Updates `toJSON` to serialize associated objects
