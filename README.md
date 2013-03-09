@@ -59,29 +59,10 @@ which,
 
 ## Things this plugin won't do...
 
-...include managing children during `set` operations, configuring child 
-URLs, identity mapping, and making any other kinds of presumptions about 
-how it will be used. Fortunately, all of these can be implemented as needed 
+...include configuring child URLs, identity mapping, and making any other 
+kinds of presumptions about how it will be used. Fortunately, all of these 
+can be implemented as needed 
 ([fiddle here](http://jsfiddle.net/rjzaworski/79T94/)):
-
-#### Manage `set` operations
-
-    Country.prototype.set = function (attributes) {
-      var self = this,
-          result = {};
-    
-      _.each(attributes, function (value, key) {
-        var attribute = self.attributes[key];
-        if (attribute instanceof Backbone.Collection) {
-            attribute.reset(value);
-        } else if (attribute instanceof Backbone.Model) {
-            attribute.set(value);
-        } else {
-            result[key] = value;
-        }
-      });
-      Backbone.Model.prototype.set.call(this, result);
-    };
 
 #### Configure child URLs
 
