@@ -63,9 +63,10 @@
 
       // Updates `set` to handle supplied attributes
       set: function (original, key, val, options) {
-        var self = this, attributes;
-        if (_.isObject(key))
-          attributes = _.clone(key) ;
+        var self = this, attributes, m;
+        if (_.isObject(key)) {
+          attributes = _.clone(key);
+        }
         else {
           attributes = {};
           attributes[key] = val;

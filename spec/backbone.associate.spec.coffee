@@ -72,7 +72,20 @@ describe 'association', ->
       expect(@parent.one().two().get('foo')).toEqual fooVal
       Backbone.dissociate @modelB
 
-  describe 'When properties on a model are set', ->
+  describe 'When a model property is set by key and value', ->
+    it 'should accept a key and its value as arguments', ->
+      @parent.set 'a', 'foo'
+      expect(@parent.attributes.a).toEqual 'foo'
+
+    it 'should set one-to-one relations', ->
+      @parent.set 'one', { foo: 'bar' }
+      expect(@parent.one().attributes.foo).toEqual 'bar'
+
+    it 'should set one-to-many relations', ->
+      @parent.set 'manies', [{ id: 'foo' }]
+      expect(@parent.manies().get('foo')).toBeDefined()
+
+  describe 'When properties on a model are set by hash', ->
 
     beforeEach ->
       @fixture =
