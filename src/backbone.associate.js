@@ -1,5 +1,5 @@
 /**
- *  backbone.associate.js v0.0.4
+ *  backbone.associate.js v0.0.5
  *  (c) 2013, RJ Zaworski
  *
  *  Presumptionless model relations for Backbone.js
@@ -14,11 +14,10 @@
 
       var self = this,
           current = self.attributes,
-          association,
-          associations = self._associations,
+          key, association, associations = self._associations,
           omit = [];
 
-      for (var key in associations) {
+      for (key in associations) {
         association = associations[key];
         if (current[key] instanceof association.type) {
           if (attributes[key] instanceof association.type) {
@@ -47,6 +46,7 @@
 
     // Wraps a method, exposing an "unwrap" method for reverting it later
     _wrapMethod = function (wrapper, key) {
+
       var self = this,
           original = self[key],
           wrapped = _.wrap(original, wrapper);
@@ -63,28 +63,31 @@
 
       // Updates `set` to handle supplied attributes
       set: function (original, key, val, options) {
-        var self = this, attributes, m;
+
+        var self = this,
+            attributes = {};
+
         if (_.isObject(key)) {
-          attributes = _.clone(key);
+          _.extend(attributes, key);
         }
         else {
-          attributes = {};
           attributes[key] = val;
         }
         if (_.isObject(val) && (typeof options === "undefined" || options === null)) {
           options = val;
         }
 
-        m = _filterAssociates.call(self, attributes);
-        return original.call(self, m, options);
+        return original.call(self, _filterAssociates.call(self, attributes), options);
       },
 
       // Updates `toJSON` to serialize associated objects
       toJSON: function (original, options) {
+
         var self = this,
-            associations = self._associations,
+            key, associations = self._associations,
             attributes = original.call(self, options);
-        for (var key in associations) {
+
+        for (key in associations) {
           if (attributes[key] instanceof associations[key]['type']) {
             attributes[key] = attributes[key].toJSON();
           }
