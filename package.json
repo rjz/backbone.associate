@@ -5,6 +5,7 @@
     "backbone": ">=0.9.2",
     "underscore": ">=1.4.3"
   },
+  "main": "src/backbone.associate.js",
   "scripts": {
     "test": "node ./node_modules/jasmine-node/bin/jasmine-node ./spec"
   },
