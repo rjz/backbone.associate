@@ -65,7 +65,7 @@
 
   for (global in globals) {
     module = globals[global];
-    root[global] = module;
+    this[global] = module;
   }
 
 }).call(this);
