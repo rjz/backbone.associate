@@ -5,7 +5,16 @@
  *  Presumptionless model relations for Backbone.js
  *  Released under the MIT License
  */
-(function (_, Backbone) {
+(function () {
+
+  var _ = this._, 
+      Backbone = this.Backbone;
+
+  // CommonJS compatibility 
+  if (typeof window === 'undefined') {
+    _ = require('underscore');
+    Backbone = module.exports = require('backbone');
+  }
 
   var  
     // Sift through a map of attributes and initialize any 
@@ -140,5 +149,5 @@
     proto._associations = null;
   };
 
-})(_, Backbone);
+})();
 

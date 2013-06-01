@@ -21,7 +21,7 @@ Fixtures =
     { age: 26, sex: 'M', name: 'Jordan' }
   ]
 
-  testCountry: 
+  testCountry:
     name: 'Canada'
     cities: [
       { name: 'Calgary' }
@@ -43,10 +43,7 @@ TestHelpers =
     whereVal[key] = value
     _.where(fixture, whereVal )
 
-
 globals =
-  _              : _
-  Backbone       : Backbone
   TestModel      : TestModel
   TestCollection : TestCollection
   Fixtures       : Fixtures

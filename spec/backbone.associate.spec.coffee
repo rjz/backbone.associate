@@ -1,5 +1,8 @@
+Backbone = require 'backbone'
+_        = require 'underscore'
+
 require './helper.coffee'
-require '../src/backbone.associate.js'
+require '../src/backbone.associate'
 
 class M extends Backbone.Model
 class N extends Backbone.Model

@@ -1,3 +1,6 @@
+Backbone = require 'backbone'
+_        = require 'underscore'
+
 require './helper.coffee'
 require '../src/backbone.associate.js'
 
