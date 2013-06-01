@@ -1,20 +1,22 @@
 /**
- *  backbone.associate.js v0.0.5
+ *  backbone.associate.js v0.0.6
  *  (c) 2013, RJ Zaworski
  *
  *  Presumptionless model relations for Backbone.js
  *  Released under the MIT License
  */
-(function () {
+(function (root, factory) {
 
-  var _ = this._, 
-      Backbone = this.Backbone;
-
-  // CommonJS compatibility 
+  // CommonJS compatibilty 
   if (typeof window == 'undefined') {
-    _ = require('underscore');
-    Backbone = module.exports = require('backbone');
+    factory(require('underscore'), require('backbone'));
   }
+  // AMD compat would go here, but requirejs `shim` config is a better option
+  else {
+    factory(root._, root.Backbone);
+  }
+
+})(this, function (_, Backbone) {
 
   var  
     // Sift through a map of attributes and initialize any 
@@ -149,5 +151,5 @@
     proto._associations = null;
   };
 
-})();
+});
 

@@ -105,6 +105,13 @@ Have something to add? Contributions are enormously welcome!
   2. Update the spec and implement the change
   3. Submit a [pull request](help.github.com/pull-requests/)
 
+## Related projects
+
+Looking for a more fully-featured alternative? Check out:
+
+  * [Backbone.Relational](https://github.com/PaulUithol/Backbone-relational)
+  * [Supermodel](https://github.com/pathable/supermodel)
+
 ## License
 
 Backbone.associate is released under the terms of the MIT license
