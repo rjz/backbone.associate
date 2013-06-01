@@ -11,7 +11,7 @@
       Backbone = this.Backbone;
 
   // CommonJS compatibility 
-  if (typeof window === 'undefined') {
+  if (typeof window == 'undefined') {
     _ = require('underscore');
     Backbone = module.exports = require('backbone');
   }
