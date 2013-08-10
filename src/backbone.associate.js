@@ -21,60 +21,68 @@
   var  
     // Sift through a map of attributes and initialize any 
     // known associations
-    _filterAssociates = function (attributes, options) {
+    _filterAssociates = function (context, attributes, options) {
 
-      var self = this,
-          current = self.attributes,
-          action, key, association, associations = self._associations,
+      var attrs, current = context.attributes,
+          isInitialized,
+          action, key, association, associations = context._associations,
           omit = [];
 
       for (key in associations) {
         association = associations[key];
-        if (current[key] instanceof association.type) {
-          if (attributes[key] instanceof association.type) {
-            current[key] = attributes[key];
+        attrs = attributes[key];
+        isInitialized = _isAssociatedType(association, current[key]);
+        if (isInitialized) {
+          if (_isAssociatedType(association, attrs)) {
+            // Reassign associated resource
+            current[key] = attrs;
             omit.push(key);
           }
-          else if (_.has(attributes, key))
+          else if (attrs && attrs !== null)
           {
-            if (current[key] instanceof Backbone.Model) {
-              current[key].set(attributes[key]);
-              omit.push(key);
-            }
-            else if (current[key] instanceof Backbone.Collection) {
-              current[key].set(attributes[key], options);
-              omit.push(key);
-            }
+            // Update attributes of associated resource
+            current[key].set(attrs, options);
+            omit.push(key);
           }
         }
-        else if (!(attributes[key] instanceof association.type)) {
-          // Create the new association
-          attributes[key] = new (association.type)(attributes[key], options);
-          if (association.url) {
-            // Assign a sensible default URL by appending the url parameter
-            // to the url of the parent model.
-            attributes[key].url = _.bind(function (association) {
-              return _.result(this, 'url') + _.result(association, 'url');
-            }, this, association);
-          }
+        else {
+          attributes[key] = _buildAssociation(context, association, attrs, options);
         }
       }
 
+      // Skip any attributes that have were handled by associations
       return _.omit(attributes, omit);
     },
 
-    // Wraps a method, exposing an "unwrap" method for reverting it later
-    _wrapMethod = function (wrapper, key) {
+    // Check whether the supplied object matches the association type
+    _isAssociatedType = function (association, obj) {
+      return (obj instanceof association.type);
+    },
 
-      var self = this,
-          original = self[key],
+    // Builds an association
+    _buildAssociation = function (context, association, attributes, options) {
+      var result = new (association.type)(attributes, options);
+      if (association.url) {
+        // Assign a sensible default URL by appending the url parameter
+        // to the url of the parent model.
+        result.url = function () {
+          return _.result(context, 'url') + _.result(association, 'url');
+        };
+      }
+      return result;
+    },
+
+    // Wraps a method, exposing an "unwrap" method for reverting it later
+    _wrapMethod = function (context, wrapper, key) {
+
+      var original = context[key],
           wrapped = _.wrap(original, wrapper);
 
       wrapped.unwrap = function () {
-        self[key] = original;
+        context[key] = original;
       };
 
-      self[key] = wrapped;
+      context[key] = wrapped;
     },
 
     // Extensions to Backbone.Model for filtering associate data, etc, etc
@@ -96,7 +104,7 @@
           options = val;
         }
 
-        return original.call(self, _filterAssociates.call(self, attributes, options), options);
+        return original.call(self, _filterAssociates(self, attributes, options), options);
       },
 
       // Updates `toJSON` to serialize associated objects
@@ -107,7 +115,7 @@
             attributes = original.call(self, options);
 
         for (key in associations) {
-          if (attributes[key] instanceof associations[key]['type']) {
+          if (_isAssociatedType(associations[key], attributes[key])) {
             attributes[key] = attributes[key].toJSON();
           }
         }
@@ -127,10 +135,10 @@
       }
 
       // Wrap extensions around existing class methods
-      _.each(extensions, _wrapMethod, self);
+      _.each(extensions, _.partial(_wrapMethod, self));
 
       // Filter any attributes that slipped by without parsing
-      _filterAssociates.call(self, self.attributes, options);
+      _filterAssociates(self, self.attributes, options);
 
       // Pass control back to the original initialize method
       return original.call(self, attrs, options);
@@ -143,7 +151,7 @@
 
     if (!proto._associations) {
       // Patch initialize method in prototype
-      _wrapMethod.call(proto, _initialize, 'initialize');
+      _wrapMethod(proto, _initialize, 'initialize');
 
       // Add namespace for associations
       proto._associations = {};
