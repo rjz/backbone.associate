@@ -21,12 +21,11 @@
   var  
     // Sift through a map of attributes and initialize any 
     // known associations
-    // TODO: pass-through `set`/`reset` options when provided
-    _filterAssociates = function (attributes) {
+    _filterAssociates = function (attributes, options) {
 
       var self = this,
           current = self.attributes,
-          key, association, associations = self._associations,
+          action, key, association, associations = self._associations,
           omit = [];
 
       for (key in associations) {
@@ -43,7 +42,8 @@
               omit.push(key);
             }
             else if (current[key] instanceof Backbone.Collection) {
-              _updateCollection(association, current[key], attributes[key]);
+              action = association.reset ? 'reset' : 'set';
+              current[key][action](attributes[key], options);
               omit.push(key);
             }
           }
@@ -54,11 +54,6 @@
       }
 
       return _.omit(attributes, omit);
-    },
-
-    _updateCollection = function (association, collection, models) {
-      var action = association.reset ? 'reset' : 'set';
-      collection[action](models);
     },
 
     // Wraps a method, exposing an "unwrap" method for reverting it later
@@ -94,7 +89,7 @@
           options = val;
         }
 
-        return original.call(self, _filterAssociates.call(self, attributes), options);
+        return original.call(self, _filterAssociates.call(self, attributes, options), options);
       },
 
       // Updates `toJSON` to serialize associated objects
@@ -128,7 +123,7 @@
       _.each(extensions, _wrapMethod, self);
 
       // Filter any attributes that slipped by without parsing
-      _filterAssociates.call(self, self.attributes);
+      _filterAssociates.call(self, self.attributes, options);
 
       // Pass control back to the original initialize method
       return original.call(self, attrs, options);
