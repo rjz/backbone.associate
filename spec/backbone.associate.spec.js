@@ -299,26 +299,37 @@
 
     });
 
-    describe('When the URL parameter is set', function () {
-      var fixture = {
-            one:     { two: [{ id: 'three' }] },
-            another: { two: [{ id: 'four' }] }
-          };
+    describe('when relation url is provided', function () {
 
-      it('should set the URL for associated resources', function () {
-        var model, spy = jasmine.createSpy(),
-            klass = Backbone.Collection.extend({ model: this.modelC });
+      var model, klass, spy;
+
+      beforeEach(function () {
+        spy = jasmine.createSpy();
+        klass = Backbone.Collection.extend({ model: this.modelC });
 
         Backbone.associate(this.modelB, {
           two: {
             type: klass,
-            url: '/two'
+            url: '/two' // TODO: functions should work, too!
+          },
+          three: {
+            type: klass,
+            url: function () {
+              return '/three'
+            }
           }
         });
 
-        model = new this.modelB(fixture.one, { parse: true });
+        model = new this.modelB({}, { parse: true });
         model.url = '/modelbs/42';
+      });
+
+      it('should build relation url from string', function () {
         expect(model.two().url()).toEqual('/modelbs/42/two');
+      });
+
+      it('should evaluate url from function', function () {
+        expect(model.three().url()).toEqual('/modelbs/42/three');
       });
     });
   });

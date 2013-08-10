@@ -48,11 +48,14 @@
           }
         }
         else if (!(attributes[key] instanceof association.type)) {
+          // Create the new association
           attributes[key] = new (association.type)(attributes[key], options);
           if (association.url) {
-            attributes[key].url = _.bind(function () {
+            // Assign a sensible default URL by appending the url parameter
+            // to the url of the parent model.
+            attributes[key].url = _.bind(function (association) {
               return _.result(this, 'url') + _.result(association, 'url');
-            }, this);
+            }, this, association);
           }
         }
       }
@@ -155,6 +158,5 @@
     proto.initialize.unwrap();
     proto._associations = null;
   };
-
 });
 
