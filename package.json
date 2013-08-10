@@ -1,14 +1,19 @@
 {
   "name": "backbone-associate",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Presumtionless model associations for Backbone.js",
   "license": "MIT",
-  "keywords": ["backbone-associate","association","model","backbone"],
+  "keywords": [
+    "backbone-associate",
+    "association",
+    "model",
+    "backbone"
+  ],
   "author": "RJ Zaworski <rj@rjzaworski.com> (http://rjzaworski.com)",
   "homepage": "https://github.com/rjz/backbone.associate",
-  "repository": { 
+  "repository": {
     "type": "git",
-    "url": "git@github.com:rjz/backbone.associate.git" 
+    "url": "git@github.com:rjz/backbone.associate.git"
   },
   "bugs": {
     "url": "https://github.com/rjz/backbone.associate/issues"
