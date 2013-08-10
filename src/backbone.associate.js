@@ -21,6 +21,7 @@
   var  
     // Sift through a map of attributes and initialize any 
     // known associations
+    // TODO: pass-through `set`/`reset` options when provided
     _filterAssociates = function (attributes) {
 
       var self = this,
@@ -42,7 +43,7 @@
               omit.push(key);
             }
             else if (current[key] instanceof Backbone.Collection) {
-              current[key].reset(attributes[key]);
+              _updateCollection(association, current[key], attributes[key]);
               omit.push(key);
             }
           }
@@ -53,6 +54,11 @@
       }
 
       return _.omit(attributes, omit);
+    },
+
+    _updateCollection = function (association, collection, models) {
+      var action = association.reset ? 'reset' : 'set';
+      collection[action](models);
     },
 
     // Wraps a method, exposing an "unwrap" method for reverting it later

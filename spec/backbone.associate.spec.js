@@ -298,6 +298,69 @@
       });
 
     });
-  });
 
+    describe('when updated', function () {
+      var fixture = {
+            one:     { two: [{ id: 'three' }] },
+            another: { two: [{ id: 'four' }] }
+          };
+
+      describe('with the reset parameter omitted', function () {
+        it('should update using `set`', function () {
+          var model, spy = jasmine.createSpy(),
+              klass = Backbone.Collection.extend({ model: this.modelC });
+
+          Backbone.associate(this.modelB, {
+            two: { type: klass }
+          });
+
+          model = new this.modelB(fixture.one, { parse: true });
+          model.two().set = spy;
+          model.set(fixture.another); // should pass options through
+          expect(spy).toHaveBeenCalled();
+        });
+      });
+
+      describe('When the reset parameter is false', function () {
+        it('should update using `set`', function () {
+          var model, spy = jasmine.createSpy(),
+              klass = Backbone.Collection.extend({ model: this.modelC });
+
+          Backbone.associate(this.modelB, {
+            two: { type: klass }
+          });
+
+          model = new this.modelB(fixture.one, { parse: true });
+          model.two().set = spy;
+          model.set(fixture.another); // should pass options through
+          expect(spy).toHaveBeenCalled();
+        });
+      });
+
+      describe('When the reset parameter is true', function () {
+        it('should update using `reset`', function () {
+          var model, spy = jasmine.createSpy(),
+              klass = Backbone.Collection.extend({ model: this.modelC });
+
+          Backbone.associate(this.modelB, {
+            two: { type: klass, reset: true }
+          });
+
+          model = new this.modelB(fixture.one, { parse: true });
+          model.two().reset = spy;
+          model.set(fixture.another); // should pass options through
+          expect(spy).toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('When the URL parameter is set', function () {
+      it('should set the URL for related models', function () {
+      });
+
+      it('should set the URL for related collections', function () {
+      });
+    });
+  });
 })();
+
