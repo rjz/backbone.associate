@@ -42,8 +42,7 @@
               omit.push(key);
             }
             else if (current[key] instanceof Backbone.Collection) {
-              action = association.reset ? 'reset' : 'set';
-              current[key][action](attributes[key], options);
+              current[key].set(attributes[key], options);
               omit.push(key);
             }
           }
