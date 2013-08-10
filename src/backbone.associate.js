@@ -24,15 +24,13 @@
     _filterAssociates = function (context, attributes, options) {
 
       var attrs, current = context.attributes,
-          isInitialized,
           action, key, association, associations = context._associations,
           omit = [];
 
       for (key in associations) {
         association = associations[key];
         attrs = attributes[key];
-        isInitialized = _isAssociatedType(association, current[key]);
-        if (isInitialized) {
+        if (_isAssociatedType(association, current[key])) {
           if (_isAssociatedType(association, attrs)) {
             // Reassign associated resource
             current[key] = attrs;
