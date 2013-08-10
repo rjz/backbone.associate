@@ -355,7 +355,26 @@
     });
 
     describe('When the URL parameter is set', function () {
-      it('should set the URL for related models', function () {
+      var fixture = {
+            one:     { two: [{ id: 'three' }] },
+            another: { two: [{ id: 'four' }] }
+          };
+
+      it('should set the URL for associated resources', function () {
+        var model, spy = jasmine.createSpy(),
+            klass = Backbone.Collection.extend({ model: this.modelC });
+
+        Backbone.associate(this.modelB, {
+          two: {
+            type: klass,
+            reset: true,
+            url: '/two'
+          }
+        });
+
+        model = new this.modelB(fixture.one, { parse: true });
+        model.url = '/modelbs/42';
+        expect(model.two().url()).toEqual('/modelbs/42/two');
       });
 
       it('should set the URL for related collections', function () {

@@ -49,7 +49,12 @@
           }
         }
         else if (!(attributes[key] instanceof association.type)) {
-          attributes[key] = new (association.type)(attributes[key]);
+          attributes[key] = new (association.type)(attributes[key], options);
+          if (association.url) {
+            attributes[key].url = _.bind(function () {
+              return _.result(this, 'url') + _.result(association, 'url');
+            }, this);
+          }
         }
       }
 
