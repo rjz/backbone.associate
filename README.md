@@ -18,7 +18,7 @@ and collections.
 
     Backbone.associate(Country, {
       flag: { type: Flag },
-      cities: { type: Cities }
+      cities: { type: Cities, url: '/cities' }
     });
 
 Here, we're associating a model (`Country`) with two relations: a `Flag`
@@ -26,7 +26,8 @@ model and a collection of `Cities`. The association keys can be anything,
 but they should match the keys used in the data that will be passed into
 the application's `parse` method.
 
-    var canada = new Counry({
+    var canada = new Country({
+      url: '/countries/canada',
       flag: { 
         colors: ['red','white'] 
       },
@@ -42,8 +43,13 @@ child resources can be serialized and included in the request.
     canada.toJSON(); // { flag: { colors: ['red','white'] }, ...
 
 Since associates are *just attributes*, they may be accessed at any 
-time using the usual `get`. For the truly lazy, `associate` also extends
-the base model with an accessor for each association:
+time using the usual `get`. 
+
+    // GET /countries/canada/cities
+    canada.get('cities').fetch();
+
+For the truly lazy, `associate` provides a convenient accessor for 
+each association:
 
     canada.flag().set({ colors: ['red','white'] });
     canada.cities().add([
@@ -59,15 +65,9 @@ which,
 
 ## Things this plugin won't do...
 
-...include configuring child URLs, identity mapping, and making any other 
-kinds of presumptions about how it will be used. Fortunately, all of these 
-can be implemented as needed 
+...include making any but the most basic presumptions about how it will 
+be used. Fortunately, all of these can be implemented as needed 
 ([fiddle here](http://jsfiddle.net/rjzaworski/79T94/)):
-
-#### Configure child URLs
-
-    canada.cities().urlRoot = canada.url() + '/cities'
-    canada.flag().url = canada.url() + '/flag'
 
 #### Identity mapping
 
@@ -115,3 +115,4 @@ Looking for a more fully-featured alternative? Check out:
 ## License
 
 Backbone.associate is released under the terms of the MIT license
+
