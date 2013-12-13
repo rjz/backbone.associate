@@ -33,7 +33,7 @@
 
       Backbone.associate(this.modelA, this.associations);
 
-      this.parent = new this.modelA;
+      this.parent = new this.modelA();
     });
 
     afterEach(function () {
@@ -57,7 +57,7 @@
     });
 
     describe('When model is initialized', function () {
-      
+
       it('should build empty associates if attributes were not provided', function () {
         _.each(this.associations, function (association, key) {
           expect(this.parent.get(key) instanceof association.type).toBeTruthy();
@@ -85,7 +85,7 @@
       });
 
       it('should preserves references to associates', function () {
-        var modelB = new this.modelB,
+        var modelB = new this.modelB(),
             modelA = new this.modelA({ one: modelB });
 
         expect(modelA.one()).toBe(modelB);
@@ -93,7 +93,7 @@
 
       it('should recurse through associated objects', function () {
         var fooVal = 'bar',
-            fixture = { 
+            fixture = {
               one: { two: { foo: fooVal } }
             };
 
@@ -128,7 +128,7 @@
     describe('When properties on a model are set by hash', function () {
 
       beforeEach(function () {
-        return this.fixture = {
+        this.fixture = {
           a: 'foo',
           b: 42,
           c: { hello: 'world' },
@@ -203,13 +203,13 @@
       });
 
       it('should preserve passed model references', function () {
-        var model = new this.modelB;
+        var model = new this.modelB();
         this.parent.set(_.extend(this.fixture, { one: model }));
         expect(this.parent.one() === model).toBeTruthy();
       });
 
       it('should preserve passed collection references', function () {
-        var collection = new this.collectionB;
+        var collection = new this.collectionB();
         this.parent.set(_.extend(this.fixture, {
           manies: collection
         }));
@@ -229,7 +229,7 @@
       });
 
       it('should recurses for nested models', function () {
-        var model, 
+        var model,
             klass = Backbone.Model.extend({}),
             fooVal = 'bar',
             fixture = {
@@ -240,7 +240,7 @@
 
         Backbone.associate(this.modelB, { two: { type: klass } });
 
-        model = new this.modelA;
+        model = new this.modelA();
         model.set(fixture);
         expect(model.one().two().get('foo')).toEqual(fooVal);
         return Backbone.dissociate(this.modelB);
@@ -259,7 +259,7 @@
 
         Backbone.associate(this.modelB, { two: { type: klass } });
 
-        model = new this.modelA;
+        model = new this.modelA();
         model.set(fixture);
         expect(model.one().two().get('three').get('foo')).toEqual(fooVal);
 
@@ -270,7 +270,7 @@
     describe('When serializing model associations', function () {
 
       it('should convert models to attribute hash', function () {
-        var result, 
+        var result,
             expected = { foo: 'bar' };
         this.parent.one().set(expected);
         result = this.parent.toJSON();
@@ -291,21 +291,21 @@
 
       it('should be defined for the child', function () {
         var modelAChild = this.modelA.extend({}),
-            child = new modelAChild;
+            child = new modelAChild();
 
         expect(child.one() instanceof this.modelB).toBeTruthy();
         expect(child.manies() instanceof this.collectionB).toBeTruthy();
       });
-
     });
 
     describe('when relation url is provided', function () {
 
-      var model, klass, spy;
+      var model, klass;
 
       beforeEach(function () {
-        spy = jasmine.createSpy();
-        klass = Backbone.Collection.extend({ model: this.modelC });
+        klass = Backbone.Collection.extend({
+          model: this.modelC
+        });
 
         Backbone.associate(this.modelB, {
           two: {
@@ -315,7 +315,7 @@
           three: {
             type: klass,
             url: function () {
-              return '/three'
+              return '/three';
             }
           }
         });
@@ -330,6 +330,39 @@
 
       it('should evaluate url from function', function () {
         expect(model.three().url()).toEqual('/modelbs/42/three');
+      });
+
+      describe('and child is added to parent collection', function () {
+        beforeEach(function () {
+          model.two().add({ id: 31 });
+        });
+
+        it('should have correct url', function () {
+          expect(model.two().last().url()).toEqual('/modelbs/42/two/31');
+        });
+      });
+    });
+
+    describe('when relation url is not provided', function () {
+
+      var model, klass;
+
+      beforeEach(function () {
+        klass = Backbone.Collection.extend({
+          model: this.modelC,
+          url: '/klasses'
+        });
+
+        Backbone.associate(this.modelB, {
+          two: { type: klass }
+        });
+
+        model = new this.modelB({}, { parse: true });
+        model.url = '/modelbs/42';
+      });
+
+      it('should revert to related object\'s url', function () {
+        expect(_.result(model.two(), 'url')).toEqual('/klasses');
       });
     });
   });

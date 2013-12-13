@@ -19,7 +19,7 @@
     },
 
     validate: function() {
-      if ((this.attributes.valid != null) && !this.attributes.valid) {
+      if ((this.attributes.valid !== null) && !this.attributes.valid) {
         return 'Invalid';
       }
     }
@@ -31,7 +31,7 @@
     testModels: [
       { age: 35, sex: 'M', name: 'John' },
       { age: 26, sex: 'F', name: 'Joan' },
-      { age: 24, sex: 'F', name: 'Jean' }, 
+      { age: 24, sex: 'F', name: 'Jean' },
       { age: 33, sex: 'M', name: 'Joe' },
       { age: 26, sex: 'M', name: 'Jordan' }
     ],

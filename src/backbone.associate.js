@@ -7,7 +7,7 @@
  */
 (function (root, factory) {
 
-  // CommonJS compatibilty 
+  // CommonJS compatibilty
   if (typeof window == 'undefined') {
     factory(require('underscore'), require('backbone'));
   }
@@ -18,8 +18,8 @@
 
 })(this, function (_, Backbone) {
 
-  var  
-    // Sift through a map of attributes and initialize any 
+  var
+    // Sift through a map of attributes and initialize any
     // known associations
     _filterAssociates = function (context, attributes, options) {
 
@@ -125,7 +125,7 @@
     _initialize = function (original, attrs, options) {
 
       var self = this,
-          extensions = _.clone(_extensions);
+          key, extensions = _.clone(_extensions);
 
       // Provide associate accessors
       for (key in self._associations) {
