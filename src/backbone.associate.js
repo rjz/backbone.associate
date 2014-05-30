@@ -1,5 +1,5 @@
 /**
- *  backbone.associate.js v0.0.6
+ *  backbone.associate.js v0.0.9
  *  (c) 2013, RJ Zaworski
  *
  *  Presumptionless model relations for Backbone.js
