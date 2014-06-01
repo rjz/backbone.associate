@@ -1,5 +1,5 @@
 /**
- *  backbone.associate.js v0.0.6
+ *  backbone.associate.js v0.0.9
  *  (c) 2013, RJ Zaworski
  *
  *  Presumptionless model relations for Backbone.js
@@ -11,7 +11,13 @@
   if (typeof window == 'undefined') {
     factory(require('underscore'), require('backbone'));
   }
-  // AMD compat would go here, but requirejs `shim` config is a better option
+  else if (typeof define === "function" && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['underscore', 'backbone'], function(_, Backbone) {
+      // Use global variables if the locals are undefined.
+      return factory(_ || root._, Backbone || root.Backbone);
+    });
+  }
   else {
     factory(root._, root.Backbone);
   }
@@ -164,5 +170,7 @@
     proto.initialize.unwrap();
     proto._associations = null;
   };
+
+  return Backbone;
 });
 
