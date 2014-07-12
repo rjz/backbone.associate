@@ -97,6 +97,10 @@ install dependencies and test with npm.
     $ npm install
     $ npm test
 
+...and there's code coverage, too:
+
+    $ npm run cover
+
 ## Contributing
 
 Have something to add? Contributions are enormously welcome!
