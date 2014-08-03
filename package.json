@@ -21,7 +21,7 @@
   "main": "src/backbone.associate.js",
   "scripts": {
     "test": "node ./node_modules/jshint/bin/jshint . && node ./node_modules/jasmine-node/bin/jasmine-node ./spec",
-    "cover": "./node_modules/istanbul/lib/cli.js cover ./node_modules/jasmine-node/bin/jasmine-node ./spec/"
+    "cover": "./node_modules/istanbul/lib/cli.js cover ./node_modules/jasmine-node/bin/jasmine-node ./spec/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "optionalDependencies": {
     "backbone": ">=0.9.2",
@@ -32,6 +32,8 @@
     "underscore": ">=1.4.3"
   },
   "devDependencies": {
+    "coveralls": "~2.11.1",
+    "istanbul": "~0.3.0",
     "jasmine-node": "~1.2.3",
     "istanbul": "^0.3.0",
     "jshint": "^2.5.2"

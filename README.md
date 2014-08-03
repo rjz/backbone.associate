@@ -4,7 +4,7 @@ Backbone.associate
 Presumptionless model relations for Backbone in < 1kb.
 
 [![Build Status](https://travis-ci.org/rjz/backbone-associate.png)](https://travis-ci.org/rjz/backbone-associate)
-
+[![Coverage Status](https://coveralls.io/repos/rjz/backbone.associate/badge.png?branch=master)](https://coveralls.io/r/rjz/backbone.associate?branch=master)
 
 ## Usage
 
