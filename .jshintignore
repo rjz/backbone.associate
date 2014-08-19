@@ -1,3 +1,4 @@
 node_modules
 coverage
 spec/browser
+spec
