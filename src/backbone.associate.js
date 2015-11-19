@@ -175,7 +175,7 @@
   Backbone.dissociate = function (klass) {
     var proto = klass.prototype;
     proto.initialize.unwrap();
-    proto._associations = null;
+    delete proto._associations;
   };
 
   return Backbone;
