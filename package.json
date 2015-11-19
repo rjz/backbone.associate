@@ -21,7 +21,7 @@
   "main": "src/backbone.associate.js",
   "scripts": {
     "pretest": "jshint",
-    "test": "istanbul cover jasmine-node ./spec",
+    "test": "istanbul cover node_modules/jasmine-node/bin/jasmine-node ./spec",
     "posttest": "cat coverage/lcov.info | coveralls"
   },
   "optionalDependencies": {

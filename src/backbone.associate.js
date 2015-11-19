@@ -153,14 +153,21 @@
 
     var proto = klass.prototype;
 
-    if (!proto._associations) {
+    if (!proto.hasOwnProperty('_associations')) {
       // Patch initialize method in prototype
       _wrapMethod(proto, _initialize, 'initialize');
+      
+      // If an _associations namespace exists in the prototype chain, get it
+      var inherited_associations = proto._associations;
 
-      // Add namespace for associations
+      // Add namespace for associations, adding in any inherited associations
       proto._associations = {};
+      if (inherited_associations) {
+        _.extend(proto._associations, inherited_associations);
+      }
     }
 
+    // Now 
     _.extend(proto._associations, associations);
   };
 
