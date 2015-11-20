@@ -156,12 +156,10 @@
     if (!proto._associations) {
       // Patch initialize method in prototype
       _wrapMethod(proto, _initialize, 'initialize');
-
-      // Add namespace for associations
-      proto._associations = {};
     }
 
-    _.extend(proto._associations, associations);
+    // Extend from an empty object in case proto._associations is undefined
+    proto._associations = _.extend({}, proto._associations, associations);
   };
 
   // Remove model associations
