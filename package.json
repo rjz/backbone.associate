@@ -20,8 +20,8 @@
   },
   "main": "src/backbone.associate.js",
   "scripts": {
-    "pretest": "jshint",
-    "test": "istanbul cover node_modules/jasmine-node/bin/jasmine-node ./spec",
+    "pretest": "jshint .",
+    "test": "istanbul cover node_modules/jasmine-node/bin/jasmine-node ./test",
     "posttest": "cat coverage/lcov.info | coveralls"
   },
   "optionalDependencies": {
