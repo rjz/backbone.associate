@@ -1,6 +1,6 @@
 {
   "name": "backbone-associate",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Presumtionless model associations for Backbone.js",
   "license": "MIT",
   "keywords": [
