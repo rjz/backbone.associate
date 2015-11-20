@@ -153,14 +153,18 @@
 
     var proto = klass.prototype;
 
-    if (!proto._associations) {
+    if (!proto.hasOwnProperty('_associations')) {
       // Patch initialize method in prototype
       _wrapMethod(proto, _initialize, 'initialize');
+      
+      // If an _associations namespace exists in the prototype chain, get it
+      var inherited_associations = proto._associations;
 
-      // Add namespace for associations
-      proto._associations = {};
+      // Add namespace for associations, adding in any inherited associations
+      proto._associations = _.extend({}, proto._associations, inherited_associations);
     }
 
+    // Now 
     _.extend(proto._associations, associations);
   };
 
@@ -168,7 +172,7 @@
   Backbone.dissociate = function (klass) {
     var proto = klass.prototype;
     proto.initialize.unwrap();
-    proto._associations = null;
+    delete proto._associations;
   };
 
   return Backbone;
