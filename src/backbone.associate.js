@@ -157,11 +157,8 @@
       // Patch initialize method in prototype
       _wrapMethod(proto, _initialize, 'initialize');
       
-      // If an _associations namespace exists in the prototype chain, get it
-      var inherited_associations = proto._associations;
-
       // Add namespace for associations, adding in any inherited associations
-      proto._associations = _.extend({}, proto._associations, inherited_associations);
+      proto._associations = _.extend({}, proto._associations);
     }
 
     // Now 
