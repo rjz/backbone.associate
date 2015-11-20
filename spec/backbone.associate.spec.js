@@ -365,6 +365,71 @@
         expect(_.result(model.two(), 'url')).toEqual('/klasses');
       });
     });
+    
+    describe('(#15) parent, child, sibling associations', function () {
+
+      var SuperModel, Child, klass1, klass2;
+    
+      beforeEach(function () {
+    
+        SuperModel = Backbone.Model.extend();
+    
+        klass1 = Backbone.Collection.extend({});
+        klass2 = Backbone.Collection.extend({});
+    
+        Backbone.associate(SuperModel, {
+          other: { type: klass1 }
+        });
+    
+        Child = SuperModel.extend();
+    
+        Backbone.associate(Child, {
+          another: { type: klass2 }
+        });
+      });
+    
+      it('leaves original child associations intact', function () {
+        var m = new Child();
+        expect(m.get('another') instanceof klass2).toEqual(true);
+      });
+    
+      it('includes parent association in child association list', function () {
+        var m = new Child();
+        expect(m.get('other') instanceof klass1).toEqual(true);
+      });
+    
+      describe('when a sibling is defined', function () {
+    
+        var ChildSibling;
+    
+        beforeEach(function () {
+    
+          ChildSibling = SuperModel.extend();
+    
+          Backbone.associate(ChildSibling, {
+            another: { type: klass1 }
+          });
+        });
+    
+        it('leaves original child associations intact', function () {
+          var m = new Child();
+          expect(m.get('another') instanceof klass2).toEqual(true);
+        });
+    
+        it('allows new child associations in sibling', function () {
+          var m = new ChildSibling();
+          expect(m.get('another') instanceof klass1).toEqual(true);
+        });
+    
+        it('includes parent association in both sibling\'s association list', function () {
+          var m = new Child();
+          var n = new ChildSibling();
+          expect(m.get('other') instanceof klass1).toEqual(true);
+          expect(n.get('other') instanceof klass1).toEqual(true);
+        });
+      });
+    });
+    
   });
 })();
 
