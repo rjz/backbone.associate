@@ -161,10 +161,7 @@
       var inherited_associations = proto._associations;
 
       // Add namespace for associations, adding in any inherited associations
-      proto._associations = {};
-      if (inherited_associations) {
-        _.extend(proto._associations, inherited_associations);
-      }
+      proto._associations = _.extend({}, proto._associations, inherited_associations);
     }
 
     // Now 
