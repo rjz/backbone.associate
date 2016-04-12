@@ -5,6 +5,7 @@
  *  Presumptionless model relations for Backbone.js
  *  Released under the MIT License
  */
+// istanbul ignore next
 (function (root, factory) {
 
   // CommonJS compatibilty
