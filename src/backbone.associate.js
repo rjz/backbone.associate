@@ -101,12 +101,12 @@
 
         if (_.isObject(key)) {
           _.extend(attributes, key);
+          if (typeof options === "undefined" || options === null) {
+            options = val;
+          }
         }
         else {
           attributes[key] = val;
-        }
-        if (_.isObject(val) && (typeof options === "undefined" || options === null)) {
-          options = val;
         }
 
         return original.call(self, _filterAssociates(self, attributes, options), options);

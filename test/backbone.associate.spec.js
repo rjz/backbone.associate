@@ -123,6 +123,12 @@
         this.parent.set('manies', [{ id: 'foo' }]);
         expect(this.parent.manies().get('foo')).toBeDefined();
       });
+      
+      it('should set unassociated properties to Backbone.Model objects', function() {
+        var modelB = new this.modelB();
+        this.parent.set('b', modelB);
+        expect(this.parent.attributes.b).toEqual(modelB);
+      });
     });
 
     describe('When properties on a model are set by hash', function () {
