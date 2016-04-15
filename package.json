@@ -10,6 +10,11 @@
     "backbone"
   ],
   "author": "RJ Zaworski <rj@rjzaworski.com> (http://rjzaworski.com)",
+  "contributors": [
+    "Jason Brubaker (https://github.com/jrrbru)",
+    "Antonio Miranda (http://www.bit-ink.com/)",
+    "Dan Hansen (https://github.com/dansomething)"
+  ],
   "homepage": "https://github.com/rjz/backbone.associate",
   "repository": {
     "type": "git",
