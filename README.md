@@ -8,91 +8,109 @@ Presumptionless model relations for Backbone in < 1kb.
 
 ## Usage
 
-Use `Backbone.associate` to define relationships between application models 
-and collections.
+Use `Backbone.associate` to define relationships between application models and
+collections.
 
-    var Flag = Backbone.Model.Extend({ /* ... */ }),
-        City = Backbone.Model.Extend({ /* ... */ }),
-        Cities = Backbone.Collection.extend({ model: City }),
-        Country = Backbone.Model.Extend({ /* ... */ });
+```js
+var Flag = Backbone.Model.Extend({ /* ... */ }),
+    City = Backbone.Model.Extend({ /* ... */ }),
+    Cities = Backbone.Collection.extend({ model: City }),
+    Country = Backbone.Model.Extend({ /* ... */ });
 
-    Backbone.associate(Country, {
-      flag: { type: Flag },
-      cities: { type: Cities, url: '/cities' }
-    });
+Backbone.associate(Country, {
+  flag: { type: Flag },
+  cities: { type: Cities, url: '/cities' }
+});
+```
 
-Here, we're associating a model (`Country`) with two relations: a `Flag`
-model and a collection of `Cities`. The association keys can be anything,
-but they should match the keys used in the data that will be passed into
-the application's `parse` method.
+Here, we're associating a model (`Country`) with two relations: a `Flag` model
+and a collection of `Cities`. The association keys can be anything, but they
+should match the keys used in the data that will be passed into the
+application's `parse` method.
 
-    var canada = new Country({
-      url: '/countries/canada',
-      flag: { 
-        colors: ['red','white'] 
-      },
-      cities: [
-        { name: 'Calgary' },
-        { name: 'Regina' }
-      ]
-    });
+```js
+var canada = new Country({
+  url: '/countries/canada',
+  flag: {
+    colors: ['red','white']
+  },
+  cities: [
+    { name: 'Calgary' },
+    { name: 'Regina' }
+  ]
+});
+```
 
-When it's time to sync the parent resource back up with the server, 
-child resources can be serialized and included in the request.
+When it's time to sync the parent resource back up with the server, child
+resources can be serialized and included in the request.
 
-    canada.toJSON(); // { flag: { colors: ['red','white'] }, ...
+```js
+canada.toJSON(); // { flag: { colors: ['red','white'] }, ...
+```
 
-Since associates are *just attributes*, they may be accessed at any 
-time using the usual `get`. 
 
-    // GET /countries/canada/cities
-    canada.get('cities').fetch();
+Since associates are *just attributes*, they may be accessed at any time using
+the usual `get`.
 
-For the truly lazy, `associate` provides a convenient accessor for 
-each association:
+```js
+// GET /countries/canada/cities
+canada.get('cities').fetch();
+```
 
-    canada.flag().set({ colors: ['red','white'] });
-    canada.cities().add([
-      { name: 'Edmonton' },
-      { name: 'Montreal' },
-      { name: 'Ottawa' },
-      { name: 'Vancouver' }
-    ]);
 
-That's handy for manipulating the relations, setting up eventing, or 
-any of the many other things this plugin won't do for you. Speaking of
-which,
+For the truly lazy, `associate` provides a convenient accessor for each
+association:
+
+```js
+canada.flag().set({ colors: ['red','white'] });
+canada.cities().add([
+  { name: 'Edmonton' },
+  { name: 'Montreal' },
+  { name: 'Ottawa' },
+  { name: 'Vancouver' }
+]);
+```
+
+
+That's handy for manipulating the relations, setting up eventing, or any of the
+many other things this plugin won't do for you. Speaking of which,
 
 ## Things this plugin won't do...
 
-...include making any but the most basic presumptions about how it will 
-be used. Fortunately, all of these can be implemented as needed 
-([fiddle here](http://jsfiddle.net/rjzaworski/79T94/)):
+...include making any but the most basic presumptions about how it will be used.
+Fortunately, all of these can be implemented as needed ([fiddle
+here](http://jsfiddle.net/rjzaworski/79T94/)):
 
 #### Identity mapping
 
-    var getCountry = function (id) {
-      _countries = {};
-      return (getCountry = function (id) {
-        if (!_countries[id]) {
-          _countries[id] = new Country({ id : id });
-        }
-        return _countries[id];
-      })(id);
-    };
+```js
+var getCountry = function (id) {
+  _countries = {};
+  return (getCountry = function (id) {
+    if (!_countries[id]) {
+      _countries[id] = new Country({ id : id });
+    }
+    return _countries[id];
+  })(id);
+};
+```
+
 
 #### Child events
 
-    canada.onCityAdded = function (model) {
-      console.log('city added!', model.get('name'));
-    }
+```js
+canada.onCityAdded = function (model) {
+  console.log('city added!', model.get('name'));
+}
 
-    canada.listenTo(canada.cities(), 'add', canada.onCityAdded);
+canada.listenTo(canada.cities(), 'add', canada.onCityAdded);
+```
+
 
 ## Testing
 
-Specs are implemented with `jasmine-node`. After cloning this repo, 
-install dependencies and test with npm.
+Specs are implemented with `jasmine-node`. After cloning this repo, install
+dependencies and test with npm.
 
     $ npm install
     $ npm test
