@@ -12,4 +12,6 @@ node_js:
 before_script:
   - export PATH=$PATH:$PWD/node_modules/.bin
 
+after_script:
+  - npm run coverage
 
