@@ -115,10 +115,6 @@ dependencies and test with npm.
     $ npm install
     $ npm test
 
-...and there's code coverage, too:
-
-    $ npm run cover
-
 ## Related projects
 
 Looking for a more fully-featured alternative? Check out:
