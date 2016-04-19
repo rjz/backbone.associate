@@ -12,6 +12,9 @@ node_js:
 before_script:
   - export PATH=$PATH:$PWD/node_modules/.bin
 
-after_script:
+script:
   - npm run coverage
+
+after_script:
+  - cat coverage/lcov.info | coveralls
 
