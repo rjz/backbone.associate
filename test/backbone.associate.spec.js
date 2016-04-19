@@ -14,6 +14,11 @@
   var M = Backbone.Model.extend({}),
       N = Backbone.Model.extend({}),
       O = Backbone.Model.extend({}),
+      P = Backbone.Model.extend({
+        toJSON: function( options ) {
+          return options;
+        }
+      }),
       C = Backbone.Collection.extend({
         model: N
       });
@@ -24,6 +29,7 @@
       this.modelA = M;
       this.modelB = N;
       this.modelC = O;
+      this.modelD = P;
       this.collectionB = C;
 
       this.associations = {
@@ -290,6 +296,22 @@
         this.parent.manies().reset(expected);
         result = this.parent.toJSON();
         expect(result.manies).toEqual(expected);
+      });
+
+      describe('when options are specified', function () {
+
+        it('should pass the options to the child model\'s toJSON method', function () {
+          var Parent = Backbone.Model.extend({});
+          Backbone.associate( Parent, {
+            child: { type:this.modelD }
+          });
+
+          var p = new Parent(),
+              options = {},
+              result = p.toJSON( options );
+
+          expect( result.child ).toEqual( options );
+        });
       });
     });
 

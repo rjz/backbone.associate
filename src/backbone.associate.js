@@ -121,7 +121,7 @@
 
         for (key in associations) {
           if (_isAssociatedType(associations[key], attributes[key])) {
-            attributes[key] = attributes[key].toJSON();
+            attributes[key] = attributes[key].toJSON(options);
           }
         }
         return attributes;
