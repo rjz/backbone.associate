@@ -14,7 +14,7 @@
   describe('Example uses', function () {
 
     var Cities, City, Country, Flag;
-    
+
     Country = Backbone.Model.extend({
       idAttribute: 'name',
       urlRoot: '/countries'
@@ -80,16 +80,15 @@
           expect(this.canada.flag()).toBe(flag);
         });
       });
-      
+
       describe('Setting associated collections', function () {
 
         beforeEach(function () {
           this.canada = new Country(Fixtures.testCountry, { parse: true });
           this.expected = [{ name: 'Saskatoon' }, { name: 'Windsor' }];
         });
-        
+
         it('should reset associated collections', function () {
-          var _this = this;
           this.canada.set({ cities: this.expected });
           expect(this.canada.cities().length).toEqual(this.expected.length);
           _.each(this.expected, function (city) {
