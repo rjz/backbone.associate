@@ -39,7 +39,7 @@
     _filterAssociates = function (context, attributes, options) {
 
       var attrs, current = context.attributes,
-          key, association, associations = context._associations,
+          action, key, association, associations = context._associations,
           omit = [];
 
       for (key in associations) {
