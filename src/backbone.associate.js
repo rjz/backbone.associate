@@ -7,23 +7,31 @@
  */
 // istanbul ignore next
 (function (root, factory) {
+    // Set up Backbone-associations appropriately for the environment. Start with AMD.
+    if (typeof define === 'function' && define.amd) {
+        define(['underscore', 'backbone'], function (_, Backbone) {
+            // Export global even in AMD case in case this script is loaded with
+            // others that may still expect a global Backbone.
+            return factory(root, Backbone, _);
+        });
 
-  // CommonJS compatibilty
-  if (typeof window == 'undefined') {
-    factory(require('underscore'), require('backbone'));
-  }
-  else if (typeof define === "function" && define.amd) {
-    // AMD. Register as an anonymous module.
-    define(['underscore', 'backbone'], function(_, Backbone) {
-      // Use global variables if the locals are undefined.
-      return factory(_ || root._, Backbone || root.Backbone);
-    });
-  }
-  else {
-    factory(root._, root.Backbone);
-  }
+        // Next for Node.js or CommonJS.
+    } else if (typeof exports !== 'undefined') {
+        var _ = require('underscore');
+        var Backbone = require('backbone');
+        factory(root, Backbone, _);
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = Backbone;
+        }
+        exports = Backbone;
 
-})(this, function (_, Backbone) {
+        // Finally, as a browser global.
+    } else {
+        factory(root, root.Backbone, root._);
+    }
+
+}(this, function (root, Backbone, _) {
+  'use strict';
 
   var
     // Sift through a map of attributes and initialize any
@@ -171,5 +179,4 @@
   };
 
   return Backbone;
-});
-
+}));
