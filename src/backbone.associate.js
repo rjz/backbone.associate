@@ -1,3 +1,4 @@
+/* globals define: false */
 /**
  *  backbone.associate.js v0.0.9
  *  (c) 2013, RJ Zaworski
@@ -7,6 +8,8 @@
  */
 // istanbul ignore next
 (function (root, factory) {
+
+  'use strict';
 
   // CommonJS compatibilty
   if (typeof window == 'undefined') {
@@ -24,6 +27,8 @@
   }
 
 })(this, function (_, Backbone) {
+
+  'use strict';
 
   var
     // Sift through a map of attributes and initialize any

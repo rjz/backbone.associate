@@ -1,7 +1,11 @@
-(function () {
+/* globals describe, it, beforeEach, afterEach, expect, jasmine, Fixtures: false */
 
-  var Backbone = this.Backbone,
-      _ = this._;
+(function (global) {
+
+  'use strict';
+
+  var Backbone = global.Backbone,
+      _ = global._;
 
   if (typeof window == 'undefined') {
     Backbone = require('backbone');
@@ -136,4 +140,4 @@
     });
   });
 
-})();
+})(this);

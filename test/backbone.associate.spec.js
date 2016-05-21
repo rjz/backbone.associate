@@ -1,7 +1,10 @@
-(function () {
+/* globals describe, it, beforeEach, afterEach, expect: false */
+(function (global) {
 
-  var Backbone = this.Backbone,
-      _ = this._;
+  'use strict';
+
+  var Backbone = global.Backbone,
+      _ = global._;
 
   if (typeof window == 'undefined') {
     Backbone = require('backbone');
@@ -56,7 +59,7 @@
 
       it('should extend dependent methods', function () {
         var methods = ['initialize', 'set', 'toJSON'];
-        _.each(methods, function (meth, key) {
+        _.each(methods, function (meth) {
           expect(this.parent[meth]).not.toEqual(Backbone.Model.prototype[meth]);
         }, this);
       });
@@ -459,5 +462,5 @@
     });
 
   });
-})();
+})(this);
 
