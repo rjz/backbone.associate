@@ -25,7 +25,8 @@
   },
   "main": "src/backbone.associate.js",
   "scripts": {
-    "pretest": "jshint .",
+    "lint": "jshint .",
+    "pretest": "npm run lint",
     "test": "jasmine-node ./test",
     "coverage": "istanbul cover jasmine-node ./test"
   },

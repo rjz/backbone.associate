@@ -1,4 +1,6 @@
 (function() {
+  'use strict';
+
   var Fixtures, TestCollection, TestHelpers, TestModel, global, globals, module;
 
   var Backbone = this.Backbone,
