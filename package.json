@@ -42,6 +42,6 @@
     "coveralls": "~2.11.9",
     "istanbul": "~0.4.3",
     "jasmine-node": "~1.14.5",
-    "jshint": "~2.5.2"
+    "jshint": "~2.9.2"
   }
 }
