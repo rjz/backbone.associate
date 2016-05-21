@@ -13,6 +13,8 @@ before_script:
   - export PATH=$PATH:$PWD/node_modules/.bin
 
 script:
+  - npm run test-browser-amd
+  - npm run test-browser-global
   - npm run coverage
 
 after_script:
