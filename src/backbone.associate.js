@@ -1,7 +1,7 @@
 /* globals define: false */
 /**
- *  backbone.associate.js v0.0.9
- *  (c) 2013, RJ Zaworski
+ *  backbone.associate.js v0.0.12
+ *  (c) 2013 - 2016, RJ Zaworski and contributors
  *
  *  Presumptionless model relations for Backbone.js
  *  Released under the MIT License
