@@ -30,138 +30,120 @@
 
   'use strict';
 
-  var
-    // Sift through a map of attributes and initialize any
-    // known associations
-    _filterAssociates = function (context, attributes, options) {
+  // Sift through a map of attributes and initialize any
+  // known associations
+  function filterAssociates (context, attributes, options) {
 
-      var attrs, current = context.attributes,
-          key, association, associations = context._associations,
-          omit = [];
+    var attrs, association;
+    var current = context.attributes;
+    var associations = context._associations;
+    var omit = [];
 
-      for (key in associations) {
-        association = associations[key];
-        attrs = attributes[key];
-        if (_isAssociatedType(association, current[key])) {
-          if (_isAssociatedType(association, attrs)) {
-            // Reassign associated resource
-            current[key] = attrs;
-            omit.push(key);
-          }
-          else if (attrs && attrs !== null)
-          {
-            // Update attributes of associated resource
-            current[key].set(attrs, options);
-            omit.push(key);
-          }
+    for (var key in associations) {
+      association = associations[key];
+      attrs = attributes[key];
+      if (isAssociatedType(association, current[key])) {
+        if (isAssociatedType(association, attrs)) {
+          // Reassign associated resource
+          current[key] = attrs;
+          omit.push(key);
         }
-        else {
-          attributes[key] = _buildAssociation(context, association, attrs, options);
+        else if (attrs && attrs !== null)
+        {
+          // Update attributes of associated resource
+          current[key].set(attrs, options);
+          omit.push(key);
         }
       }
-
-      // Skip any attributes that have were handled by associations
-      return _.omit(attributes, omit);
-    },
-
-    // Check whether the supplied object matches the association type
-    _isAssociatedType = function (association, obj) {
-      return (obj instanceof association.type);
-    },
-
-    // Builds an association
-    _buildAssociation = function (context, association, attributes, options) {
-      var result = new (association.type)(attributes, options);
-      if (association.url) {
-        // Assign a sensible default URL by appending the url parameter
-        // to the url of the parent model.
-        result.url = function () {
-          return _.result(context, 'url') + _.result(association, 'url');
-        };
+      else {
+        attributes[key] = buildAssociation(context, association, attrs, options);
       }
-      return result;
-    },
+    }
 
-    // Wraps a method, exposing an "unwrap" method for reverting it later
-    _wrapMethod = function (context, wrapper, key) {
+    // Skip any attributes that have were handled by associations
+    return _.omit(attributes, omit);
+  }
 
-      var original = context[key],
-          wrapped = _.wrap(original, wrapper);
+  // Check whether the supplied object matches the association type
+  function isAssociatedType (association, obj) {
+    return (obj instanceof association.type);
+  }
 
-      wrapped.unwrap = function () {
-        context[key] = original;
+  function buildAssociation (context, association, attributes, options) {
+    var result = new (association.type)(attributes, options);
+    if (association.url) {
+      // Assign a sensible default URL by appending the url parameter
+      // to the url of the parent model.
+      result.url = function () {
+        return _.result(context, 'url') + _.result(association, 'url');
       };
+    }
+    return result;
+  }
 
-      context[key] = wrapped;
-    },
+  // Extensions to Backbone.Model for filtering associate data, etc, etc
+  var extensions = {
 
-    // Extensions to Backbone.Model for filtering associate data, etc, etc
-    _extensions = {
+    // Updates `set` to handle supplied attributes
+    set: function (original, key, val, options) {
 
-      // Updates `set` to handle supplied attributes
-      set: function (original, key, val, options) {
+      var attributes = {};
 
-        var self = this,
-            attributes = {};
-
-        if (_.isObject(key)) {
-          _.extend(attributes, key);
-          if (typeof options === "undefined" || options === null) {
-            options = val;
-          }
+      if (_.isObject(key)) {
+        _.extend(attributes, key);
+        if (typeof options === "undefined" || options === null) {
+          options = val;
         }
-        else {
-          attributes[key] = val;
-        }
-
-        return original.call(self, _filterAssociates(self, attributes, options), options);
-      },
-
-      // Updates `toJSON` to serialize associated objects
-      toJSON: function (original, options) {
-
-        var self = this,
-            key, associations = self._associations,
-            attributes = original.call(self, options);
-
-        for (key in associations) {
-          if (_isAssociatedType(associations[key], attributes[key])) {
-            attributes[key] = attributes[key].toJSON(options);
-          }
-        }
-        return attributes;
       }
-    },
-
-    // Patch initialize method to setup associations and filter initial attributes
-    _initialize = function (original, attrs, options) {
-
-      var self = this,
-          key, extensions = _.clone(_extensions);
-
-      // Provide associate accessors
-      for (key in self._associations) {
-        extensions[key] = _.partial(self.get, key);
+      else {
+        attributes[key] = val;
       }
 
-      // Wrap extensions around existing class methods
-      _.each(extensions, _.partial(_wrapMethod, self));
+      return original.call(this, filterAssociates(this, attributes, options), options);
+    },
 
-      // Filter any attributes that slipped by without parsing
-      _filterAssociates(self, self.attributes, options);
+    // Updates `toJSON` to serialize associated objects
+    toJSON: function (original, options) {
+      var associations = this._associations;
+      var attributes = original.call(this, options);
+      for (var key in associations) {
+        if (isAssociatedType(associations[key], attributes[key])) {
+          attributes[key] = attributes[key].toJSON(options);
+        }
+      }
+      return attributes;
+    }
+  };
 
-      // Pass control back to the original initialize method
-      return original.call(self, attrs, options);
-    };
+  // Patch initialize method to setup associations and filter initial attributes
+  var initialize = function (attrs, options) {
+    var key;
+
+    // Provide associate accessors
+    for (key in this._associations) {
+      this[key] = _.partial(this.get, key);
+    }
+
+    // Wrap extensions around existing class methods
+    for (key in extensions) {
+      this[key] = _.wrap(this[key], extensions[key]);
+    }
+
+    // Filter any attributes that slipped by without parsing
+    filterAssociates(this, this.attributes, options);
+
+    // Pass control back to the original initialize method
+    return this.__unassociatedInit.call(this, attrs, options);
+  };
 
   // Define associations for a model
   Backbone.associate = function (klass, associations) {
-
     var proto = klass.prototype;
 
     if (!proto._associations) {
       // Patch initialize method in prototype
-      _wrapMethod(proto, _initialize, 'initialize');
+      proto.__unassociatedInit = proto.initialize;
+      proto.initialize = initialize;
     }
 
     // Extend from an empty object in case proto._associations is undefined
@@ -171,10 +153,9 @@
   // Remove model associations
   Backbone.dissociate = function (klass) {
     var proto = klass.prototype;
-    proto.initialize.unwrap();
+    proto.initialize = proto.__unassociatedInit;
     proto._associations = null;
   };
 
   return Backbone;
 });
-
