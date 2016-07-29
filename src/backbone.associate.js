@@ -11,9 +11,11 @@
 
   'use strict';
 
-  // CommonJS compatibilty
-  if (typeof window == 'undefined') {
-    factory(require('underscore'), require('backbone'));
+  // Node.js or CommonJS compatibilty
+  if (typeof exports !== 'undefined') {
+    var Backbone = require('backbone');
+    var _ = require('underscore');
+    module.exports = factory(_, Backbone);
   }
   else if (typeof define === "function" && define.amd) {
     // AMD. Register as an anonymous module.
